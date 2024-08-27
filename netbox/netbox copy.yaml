@@ -1,0 +1,65 @@
+services:
+  netbox-db:
+    image: postgres:latest
+    container_name: netbox-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: J5brHrAXFLQSif0K
+      POSTGRES_DB: netbox
+      POSTGRES_USER: netbox
+    networks:
+      - netbox-net
+
+  netbox-redis:
+    image: redis:latest
+    container_name: netbox-redis
+    command:
+      - redis-cli ping
+    networks:
+      - netbox-net
+
+  netbox:
+    image: netboxcommunity/netbox:latest
+    container_name: netbox
+    environment:
+      CORS_ORIGIN_ALLOW_ALL: 'True'
+      DB_HOST: netbox-db
+      DB_NAME: netbox
+      DB_PASSWORD: J5brHrAXFLQSif0K
+      DB_USER: netbox
+      EMAIL_FROM: netbox@quang.com
+      EMAIL_PASSWORD: ''
+      EMAIL_PORT: '25'
+      EMAIL_SERVER: localhost
+      EMAIL_SSL_CERTFILE: ''
+      EMAIL_SSL_KEYFILE: ''
+      EMAIL_TIMEOUT: '5'
+      EMAIL_USERNAME: netbox
+      EMAIL_USE_SSL: 'false'
+      EMAIL_USE_TLS: 'false'
+      GRAPHQL_ENABLED: 'true'
+      HOUSEKEEPING_INTERVAL: '86400'
+      MEDIA_ROOT: /opt/netbox/netbox/media
+      METRICS_ENABLED: 'false'
+      REDIS_DATABASE: '0'
+      REDIS_HOST: netbox-redis
+      REDIS_INSECURE_SKIP_TLS_VERIFY: 'false'
+      REDIS_PASSWORD: t4Ph722qJ5QHeQ1qfu36
+      REDIS_SSL: 'false'
+      RELEASE_CHECK_URL: https://api.github.com/repos/netbox-community/netbox/releases
+      SECRET_KEY: r(m)9nLGnz$(_q3N4z1k(EFsMCjjjzx08x9VhNVcfd%6RF#r!6DE@+V5Zk2X
+      SKIP_SUPERUSER: 'true'
+      WEBHOOKS_ENABLED: 'true'
+    user: 'unit:root'
+    ports:
+      - "8000:8000"
+    depends_on:
+      - netbox-db
+      - netbox-redis
+    restart: unless-stopped
+    networks:
+      - netbox-net
+
+networks:
+  netbox-net:
+    driver: bridge

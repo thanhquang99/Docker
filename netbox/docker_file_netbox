@@ -1,0 +1,2 @@
+FROM netboxcommunity/netbox:latest
+COPY /opt/netbox-docker/configuration /etc/netbox/config
