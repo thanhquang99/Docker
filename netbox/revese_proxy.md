@@ -34,20 +34,19 @@ server {
 ```
 Nội dung các lệnh cấu hình ssl
 ```
-    cd ~
-    openssl genrsa -out CA.key 2048
-    openssl req -x509 -sha256 -new -nodes -days 3650 -key CA.key -out CA.pem
-    openssl genrsa -out localhost.key 2048
-    openssl req -new -key localhost.key -out localhost.csr
-    sudo tee localhost.ext > /dev/null <<EOF
+cd ~
+openssl genrsa -out CA.key 2048
+openssl req -x509 -sha256 -new -nodes -days 3650 -key CA.key -out CA.pem
+openssl genrsa -out localhost.key 2048
+openssl req -new -key localhost.key -out localhost.csr
+sudo tee localhost.ext > /dev/null <<EOF
 authorityKeyIdentifier = keyid,issuer
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
 subjectAltName = @alt_names
 [alt_names]
 DNS.1 = $Domain_Netbox
-IP.1 = $IP
 EOF
-    openssl x509 -req -in localhost.csr -CA CA.pem -CAkey CA.key -CAcreateserial -days 365 -sha256 -extfile localhost.ext -out localhost.crt
-    mv localhost.crt localhost.key /var/lib/docker/volumes/nginx-ssl/_data/
+openssl x509 -req -in localhost.csr -CA CA.pem -CAkey CA.key -CAcreateserial -days 365 -sha256 -extfile localhost.ext -out localhost.crt
+mv localhost.crt localhost.key /var/lib/docker/volumes/root_nginx-ssl/_data/
 ```

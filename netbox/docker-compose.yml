@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: netbox
       POSTGRES_PASSWORD: minhtenlaquang
     volumes:
-      - netbox-postgres-data:/var/lib/postgresql/data 
+      - netbox-postgres-data:/var/lib/postgresql/data:rw
   my_redis:
     image: redis:7-alpine
     container_name: my_redis
@@ -17,7 +17,7 @@ services:
       - netbox_net
 
   my_netbox:
-    image: my-netbox:v4.0-2.9.1
+    image: thanhquang99/netbox:v4.0-2.9.1.1
     container_name: my_netbox
     networks:
       - netbox_net
@@ -39,10 +39,10 @@ services:
       SKIP_SUPERUSER: "true"
       WEBHOOKS_ENABLED: "true"
     volumes:
-      - netbox-conf:/etc/netbox/config
-      - netbox-media-files:/opt/netbox/netbox/media
-      - netbox-reports-files:/opt/netbox/netbox/reports
-      - netbox-scripts-files:/opt/netbox/netbox/scripts
+      - netbox-conf:/etc/netbox/config:rw
+      - netbox-media-files:/opt/netbox/netbox/media:rw
+      - netbox-reports-files:/opt/netbox/netbox/reports:rw
+      - netbox-scripts-files:/opt/netbox/netbox/scripts:rw
   my_nginx:
     image: nginx:latest
     container_name: my_nginx
@@ -52,8 +52,8 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - nginx-conf:/etc/nginx/conf.d
-      - nginx-ssl:/etc/nginx/ssl-certificate
+      - nginx-conf:/etc/nginx/conf.d:rw
+      - nginx-ssl:/etc/nginx/ssl-certificate:rw
 networks:
   netbox_net:
     driver: bridge
