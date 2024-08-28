@@ -1,0 +1,74 @@
+services:
+  my_postgres:
+    image: postgres:16-alpine
+    container_name: my_postgres
+    networks:
+      - netbox_net
+    environment:
+      POSTGRES_DB: netbox
+      POSTGRES_USER: netbox
+      POSTGRES_PASSWORD: minhtenlaquang
+    volumes:
+      - netbox-postgres-data:/var/lib/postgresql/data 
+  my_redis:
+    image: redis:7-alpine
+    container_name: my_redis
+    networks:
+      - netbox_net
+
+  my_netbox:
+    image: my-netbox:v4.0-2.9.1
+    container_name: my_netbox
+    networks:
+      - netbox_net
+    environment:
+      CORS_ORIGIN_ALLOW_ALL: "True"
+      TIME_ZONE: 	Asia/Ho_Chi_Minh
+      DB_HOST: my_postgres
+      DB_NAME: netbox
+      DB_PASSWORD: minhtenlaquang
+      DB_USER: netbox
+      GRAPHQL_ENABLED: "true"
+      MEDIA_ROOT: /opt/netbox/netbox/media
+      METRICS_ENABLED: "false"
+      REDIS_DATABASE: "0"
+      REDIS_HOST: my_redis
+      REDIS_INSECURE_SKIP_TLS_VERIFY: "false"
+      REDIS_SSL: "false"
+      SECRET_KEY: 'r(m)9nLGnz$(_q3N4z1k(EFsMCjjjzx08x9VhNVcfd%6RF#r!6DE@+V5Zk2X'
+      SKIP_SUPERUSER: "true"
+      WEBHOOKS_ENABLED: "true"
+    volumes:
+      - netbox-conf:/etc/netbox/config
+      - netbox-media-files:/opt/netbox/netbox/media
+      - netbox-reports-files:/opt/netbox/netbox/reports
+      - netbox-scripts-files:/opt/netbox/netbox/scripts
+  my_nginx:
+    image: nginx:latest
+    container_name: my_nginx
+    networks:
+      - netbox_net
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - nginx-conf:/etc/nginx/conf.d
+      - nginx-ssl:/etc/nginx/ssl-certificate
+networks:
+  netbox_net:
+    driver: bridge
+volumes:
+  netbox-conf:
+    driver: local
+  netbox-media-files:
+    driver: local
+  netbox-reports-files:
+    driver: local
+  netbox-scripts-files:
+    driver: local
+  netbox-postgres-data:
+    driver: local
+  nginx-conf:
+    driver: local
+  nginx-ssl:
+    driver: local

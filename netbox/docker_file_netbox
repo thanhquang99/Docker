@@ -1,2 +1,4 @@
-FROM netboxcommunity/netbox:latest
-COPY /opt/netbox-docker/configuration /etc/netbox/config
+FROM netboxcommunity/netbox:v4.0-2.9.1
+RUN rm -rf /etc/netbox/config/*
+COPY /opt/netbox-docker/configuration/* /etc/netbox/config/
+CMD ["/bin/bash", "-c", "/opt/netbox/venv/bin/python /opt/netbox/netbox/manage.py rqworker && /opt/netbox/housekeeping.sh"]
