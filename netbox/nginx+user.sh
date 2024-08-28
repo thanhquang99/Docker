@@ -1,18 +1,53 @@
 #!/bin/bash
 IP=$(hostname -I | awk '{print $1}')
-# Yêu cầu người dùng nhập tên miền cho NetBox
-read -p "Nhập tên miền cho NetBox (ví dụ: netbox.quang.local): " DOMAIN_NETBOX
 
-# Kiểm tra nếu tên miền không được nhập
-if [ -z "$DOMAIN_NETBOX" ]; then
-    echo "Tên miền không được bỏ trống. Vui lòng chạy lại script và nhập tên miền hợp lệ."
-    exit 1
-fi
+# Hàm kiểm tra định dạng tên miền
+validate_domain() {
+    local domain="$1"
+    # Biểu thức chính quy để kiểm tra định dạng tên miền
+    if [[ "$domain" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ && "$domain" =~ ^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+)*\.(local|com|net|org)$ ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Yêu cầu người dùng nhập tên miền cho NetBox
+while true; do
+    read -p "Nhập tên miền cho NetBox (ví dụ: netbox.tenmien.local): " DOMAIN_NETBOX
+
+    # Kiểm tra định dạng tên miền
+    if validate_domain "$DOMAIN_NETBOX"; then
+        break
+    else
+        echo "Tên miền không hợp lệ. Vui lòng nhập tên miền theo định dạng hợp lệ (ví dụ: netbox.tenmien.local)."
+    fi
+done
+
+# Hàm kiểm tra định dạng email
+validate_email() {
+    local email="$1"
+    # Biểu thức chính quy đơn giản để kiểm tra định dạng email
+    if [[ ! "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+        return 1
+    fi
+    return 0
+}
 
 # Yêu cầu người dùng nhập thông tin cho superuser
+while true; do
+    read -p "Nhập địa chỉ email cho NetBox superuser (bắt buộc: user@gmail.com): " NETBOX_EMAIL
+
+    # Kiểm tra định dạng email
+    if validate_email "$NETBOX_EMAIL"; then
+        break
+    else
+        echo "Địa chỉ email không hợp lệ. Vui lòng nhập địa chỉ email theo định dạng hợp lệ."
+    fi
+done
+
 read -p "Nhập tên người dùng (username) cho NetBox superuser: " NETBOX_USERNAME
 read -p "Nhập mật khẩu (password) cho NetBox superuser: " NETBOX_PASSWORD
-read -p "Nhập địa chỉ email cho NetBox superuser: " NETBOX_EMAIL
 
 # Kiểm tra nếu các thông tin không được nhập
 if [ -z "$NETBOX_USERNAME" ] || [ -z "$NETBOX_PASSWORD" ] || [ -z "$NETBOX_EMAIL" ]; then
@@ -42,7 +77,7 @@ openssl genrsa -out localhost.key 2048
 openssl req -new -key localhost.key -out localhost.csr
 
 # Tạo file cấu hình mở rộng cho chứng chỉ
-sudo tee localhost.ext > /dev/null <<EOF
+tee localhost.ext > /dev/null <<EOF
 authorityKeyIdentifier = keyid,issuer
 basicConstraints = CA:FALSE
 keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
@@ -100,6 +135,8 @@ echo "Cấu hình Nginx và chứng chỉ SSL đã được thiết lập thành
 docker compose exec my_netbox bash -c "DJANGO_SUPERUSER_PASSWORD='$NETBOX_PASSWORD' python3 /opt/netbox/netbox/manage.py createsuperuser --no-input --username '$NETBOX_USERNAME' --email '$NETBOX_EMAIL'"
 
 echo "Superuser cho NetBox đã được tạo thành công với username: $NETBOX_USERNAME và email: $NETBOX_EMAIL."
+
+# Ghi thông tin vào file
 touch thongtin.txt
 echo "Sửa file hosts thành $IP $DOMAIN_NETBOX" >> thongtin.txt
 echo "Link truy cập netbox: https://$DOMAIN_NETBOX" >> thongtin.txt
