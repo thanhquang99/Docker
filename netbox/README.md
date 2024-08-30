@@ -10,7 +10,7 @@ Giải thích:
 - Chỉ có duy nhất container my_nginx được ánh xạ 2 port 80 <-> 80, 443 <-> 443
 
 ## 2. Hướng dẫn sử dụng 
-- Đầu tiên bạn sẽ cần download repo này về 
+- Đầu tiên bạn sẽ cần download repo này về. Lưu ý bắt buộc phải di chuyển đến thư mục /opt nếu không file active sẽ có thể bị lỗi
   ```
   cd /opt/
   git clone https://github.com/thanhquang99/Docker
@@ -32,5 +32,19 @@ Giải thích:
   chmod +x active.sh
   . active.sh
   ```
-- Bây giờ ta cần nhập thông tin từ màn hình vào (yêu cầu đúng cú pháp được gợi ý)
+- Bây giờ ta cần nhập thông tin từ màn hình vào (yêu cầu đúng cú pháp được gợi ý), thông tin sẽ bao gồm tên miền của netbox, gmail, user và password của netbox
   ![alt text](../anh/Screenshot_42.png)
+  - Nếu bạn quên thông tin mà bạn đã nhập bạn có thể xem file thông tin
+    ```
+    root@Quang-docker:~# cat thongtin.txt
+    Sửa file hosts thành 172.16.66.41 quang.netbox.com
+    Link truy cập netbox: https://quang.netbox.com
+    Netbox User: admin
+    Netbox password: fdjhuixtyy5dpasfn
+    netbox mail: quang@gmail.com
+    Sửa file hosts thành 172.16.66.41 quang.netbox.com
+    Link truy cập netbox: https://quang.netbox.com
+    Netbox User: fdjhuixtyy5dpasfn
+    Netbox password: fdjhuixtyy5dpasfn
+    netbox mail: quang@gmail.com
+    ```

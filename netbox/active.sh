@@ -132,7 +132,7 @@ rm -rf CA.key CA.pem localhost.csr localhost.ext
 echo "Cấu hình Nginx và chứng chỉ SSL đã được thiết lập thành công cho tên miền $DOMAIN_NETBOX."
 
 # Tạo NetBox superuser tự động với thông tin đã nhập
-docker compose exec my_netbox bash -c "DJANGO_SUPERUSER_PASSWORD='$NETBOX_PASSWORD' python3 /opt/netbox/netbox/manage.py createsuperuser --no-input --username '$NETBOX_USERNAME' --email '$NETBOX_EMAIL'"
+docker exec my_netbox bash -c "DJANGO_SUPERUSER_PASSWORD='$NETBOX_PASSWORD' /opt/netbox/netbox/manage.py createsuperuser --no-input --username '$NETBOX_USERNAME' --email '$NETBOX_EMAIL'"
 
 echo "Superuser cho NetBox đã được tạo thành công với username: $NETBOX_USERNAME và email: $NETBOX_EMAIL."
 
