@@ -13,12 +13,12 @@ Có lẽ bạn đã biết rằng iptables liên quan đến các gói tin IP, t
 - Một gói tin được tạo bởi một quy trình người dùng, gửi đến ngăn xếp mạng và sau đó được giao đến giao diện mạng.
 - Một gói tin đến giao diện mạng và sau đó, theo một số quy tắc định tuyến, được chuyển tiếp đến một giao diện mạng khác.
 
-![alt text](anh/Screenshot_10.png)
+![alt text](../anh/Screenshot_10.png)
 
 - Phần định tuyến ở giữa được cung cấp bỏi kernel của Linux, hay được gọi là forwarding bằng các gửi các giá trị khác 0 đến `/proc/sys/net/ipv4/ip_forward`
 - 1 Network stack đúng phải có các giai đoạn khác nhau của quá trình xử lý gói tin 
 
-![alt text](anh/Screenshot_11.png)
+![alt text](../anh/Screenshot_11.png)
 
 - PREROUTING: Đây là chuỗi đầu tiên mà các gói tin đến giao diện mạng (eth0, eth1) sẽ đi qua trước khi được định tuyến. Ở giai đoạn này, các gói tin có thể được thay đổi địa chỉ đích (DNAT).
 
@@ -54,7 +54,7 @@ $ iptables -A OUTPUT -p tcp --dport 22 -j DROP
 $ iptables -A INPUT -p tcp -m multiport --dports 80,443 -m conntrack --ctstate NEW,ESTABLISHED -j ACCEPT
 $ iptables -A OUTPUT -p tcp -m multiport --dports 80,443 -m conntrack --ctstate ESTABLISHED -j ACCEPT
 ```
-![alt text](anh/Screenshot_12.png)
+![alt text](../anh/Screenshot_12.png)
 
 ## 4. Giới thiệu về các bảng (Tables) của iptables
 Các bảng trong iptables là các nhóm logic của các chuỗi. Một số bảng nổi bật bao gồm:
@@ -68,10 +68,10 @@ Các bảng trong iptables là các nhóm logic của các chuỗi. Một số b
 ## 5. Thứ tự ưu tiên các chuỗi
 - Thứ tự ưu tiên các chuỗi khi các gói tin được xử lý từ process <-> interface
 
-![alt text](anh/Screenshot_13.png)
+![alt text](../anh/Screenshot_13.png)
 
 - Thứ tự ưu tiên các chuỗi khi các gói tin được xử lý từ interface 1 <-> interface 2 trên máy
-![alt text](anh/Screenshot_14.png)
+![alt text](../anh/Screenshot_14.png)
 # Tài liệu tham khảo
 https://iximiuz.com/en/posts/laymans-iptables-101/
 

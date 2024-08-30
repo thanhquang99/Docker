@@ -17,7 +17,7 @@ Network trong docker sử 2 tính năng quan trong để từ đó xây dựng l
 Các VM trong VMware cũng có 1 hệ thống mạng riêng, namespace cũng thế nó cũng cần hệ thống mạng riêng được gọi là network namespace
 
 ### 1.1 Các thành phần của Network Namespace
-![alt text](anh/Screenshot_15.png)
+![alt text](../anh/Screenshot_15.png)
 Tương tự như Network của VM thì Network Namespace cũng bao gồm các thành phần:
 - Network Interfaces: Tên card mạng của namespace
 - IP: Địa chỉ IP của interface của namespace
@@ -59,10 +59,10 @@ Mặc định khi chưa tạo namespace thì ta sẽ có root namespace chứa c
   ip -n blue link set veth-blue up
   ip -n yellow link set veth-yellow up
   ```
-![alt text](anh/Screenshot_16.png)
+![alt text](../anh/Screenshot_16.png)
 ## 2. Tìm hiểu về Linux bridge
 ### 2.1 Linux bridge có thể làm được những gì
-![alt text](anh/Screenshot_17.png)
+![alt text](../anh/Screenshot_17.png)
 
 Trong phần tìm hiểu ở trên ta nhận ra rằng việc cấu hình như trên rất tù, không thể giải quyết được vấn đề nếu như nhiều namespace muốn dùng cùng 1 dải mạng kết nối với nhau thì sao?
 
@@ -110,9 +110,9 @@ Linux Bridge sẽ tạo ra một switch ảo layer 2, những gì mà switch lay
   ip netns exec yellow ip addr add 192.168.10.3/24 dev veth-y
   ip netns exec blue ip addr add 192.168.10.4/24 dev veth-b
   ```
-  ![alt text](anh/Screenshot_18.png)
+  ![alt text](../anh/Screenshot_18.png)
 ## 3. Linux bridge nâng cao
-![alt text](anh/Screenshot_19.png)
+![alt text](../anh/Screenshot_19.png)
 
 Ở mục trước ta đã cấu hình các namespace liên lạc được với nhau thông qua swwitch nhưng như vậy mới chỉ là cô lập môi trường các namespace không thể liên lạc ra internet, phần này sẽ hướng dẫn bạn làm cách nào để từ vSwitch có thể thông ra môi trường inter net.
 
@@ -139,13 +139,13 @@ Phần này sẽ lấy kết quả cấu hình ở mục 2.2
   ```
   iptables -t nat -A POSTROUTING -s 192.168.10.4/24 -o ens160 -j MASQUERADE
   ```
-  ![alt text](anh/Screenshot_20.png)
-  ![alt text](anh/Screenshot_22.png)
+  ![alt text](../anh/Screenshot_20.png)
+  ![alt text](../anh/Screenshot_22.png)
 
 
 Bài toán 2: Tôi muốn từ namespace 2,3,4 là 3 backend chạy đằng sau và từ internet muốn kết nối đến backend 2 port 80 thì phải gọi qua namespace 1 port 8080
 
-![alt text](anh/Screenshot_23.png)
+![alt text](../anh/Screenshot_23.png)
 
 - Tương tự như các bước trước ta cần tạo namespace và linux bridge
   ```
@@ -196,7 +196,7 @@ Bài toán 2: Tôi muốn từ namespace 2,3,4 là 3 backend chạy đằng sau 
   ip netns exec nginx nginx -g 'daemon off;'
   ```
 
-  ![alt text](anh/Screenshot_24.png)
+  ![alt text](../anh/Screenshot_24.png)
 
 # Tài liệu tham khảo
 https://www.youtube.com/watch?v=j_UUnlVC2Ss
