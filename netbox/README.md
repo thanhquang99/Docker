@@ -27,3 +27,10 @@ Giải thích:
   ```
   ![alt text](../anh/Screenshot_40.png)
 - Đợi thời gian khoảng 5 phút để docker compose chạy xong ta sẽ tạo thêm 1 terminal mới `ctrl +shirt +u` để tiến hành active bao gòm tạo super user và cấu hình nginx làm reverse proxy
+  ```
+  cd /opt/Docker/netbox/
+  chmod +x active.sh
+  . active.sh
+  ```
+- Bây giờ ta cần nhập thông tin từ màn hình vào (yêu cầu đúng cú pháp được gợi ý)
+  ![alt text](../anh/Screenshot_42.png)

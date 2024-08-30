@@ -56,10 +56,10 @@ if [ -z "$NETBOX_USERNAME" ] || [ -z "$NETBOX_PASSWORD" ] || [ -z "$NETBOX_EMAIL
 fi
 
 # Đường dẫn đến thư mục cấu hình Nginx
-NGINX_CONF_DIR="/var/lib/docker/volumes/root_nginx-conf/_data"
+NGINX_CONF_DIR="/var/lib/docker/volumes/netbox_nginx-conf/_data/"
 
 # Đường dẫn đến nơi lưu chứng chỉ SSL
-SSL_CERT_DIR="/var/lib/docker/volumes/root_nginx-ssl/_data/"
+SSL_CERT_DIR="/var/lib/docker/volumes/netbox_nginx-ssl/_data/"
 
 # Chuyển đến thư mục chính của người dùng
 cd ~
