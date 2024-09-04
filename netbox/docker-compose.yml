@@ -19,6 +19,9 @@ services:
   my_netbox:
     image: thanhquang99/netbox:v4.0-2.9.1.1
     container_name: my_netbox
+    depends_on:
+      - my_postgres
+      - my_redis
     networks:
       - netbox_net
     environment:
@@ -46,6 +49,8 @@ services:
   my_nginx:
     image: nginx:latest
     container_name: my_nginx
+    depends_on:
+      - my_netbox
     networks:
       - netbox_net
     ports:

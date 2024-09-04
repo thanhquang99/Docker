@@ -1,0 +1,89 @@
+services:
+  graylog:
+    # Sử dụng image Graylog phiên bản 6.0.5
+    image: graylog/graylog:6.0.5
+    container_name: graylog
+    # Định nghĩa phụ thuộc vào dịch vụ opensearch và mongodb
+    depends_on:
+      opensearch:
+        condition: "service_started" # Khởi động khi opensearch đã sẵn sàng
+      mongodb:
+        condition: "service_started" # Khởi động khi mongodb đã sẵn sàng
+    environment:
+      - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000 # Địa chỉ bind cho giao diện HTTP
+      - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200 # Địa chỉ của OpenSearch
+      - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog # URI kết nối MongoDB
+      - GRAYLOG_REPORT_DISABLE_SANDBOX=true # Vô hiệu hóa sandbox cho báo cáo
+      - GRAYLOG_PASSWORD_SECRET=Nr0yb0Ar43snqyIv1p0eP5WKwhBgJipnEVR7fJyQnC2EkRMAE8WkItMtfQuPTChTR4IyneHh7lk2-3dDXkLizF6xzMnk8Tjq # Bí mật dùng để mã hóa
+      - GRAYLOG_ROOT_PASSWORD_SHA2=065e0ac84427a42a55a56f786ae125255d0c0455deb763a96fb4f13be6ebc8c9 # Mật khẩu root mã hóa SHA2
+      - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/ # URI bên ngoài cho giao diện web
+      #- GRAYLOG_ROOT_TIMEZONE=Asia/Ho_Chi_Minh # Múi giờ cho tài khoản root
+    ports:
+      - "9000:9000" # Cổng HTTP cho giao diện web
+      - "5044:5044" # Cổng cho nhận log từ Filebeat
+      - "5140:5140" # Cổng cho nhận log từ syslog
+      - "12201:12201" # Cổng cho nhận log từ GELF UDP
+      - "13301:13301" # Cổng tùy chỉnh (thay thế cho dịch vụ khác)
+      - "13302:13302" # Cổng tùy chỉnh khác
+    volumes:
+      - "graylog_data:/usr/share/graylog/data/data:rw" # Volume cho dữ liệu của Graylog
+      - "graylog_journal:/usr/share/graylog/data/journal:rw" # Volume cho journal của Graylog
+    restart: on-failure # Tự động khởi động lại nếu gặp lỗi
+    networks:
+      - graylog_net
+
+  opensearch:
+    # Sử dụng image OpenSearch phiên bản 2.12.0
+    image: opensearchproject/opensearch:2.12.0
+    container_name: opensearch
+    environment:
+      - OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g # Thiết lập bộ nhớ Java cho OpenSearch
+      - bootstrap.memory_lock=true # Khóa bộ nhớ để cải thiện hiệu suất
+      - discovery.type=single-node # Thiết lập chế độ single-node
+      - action.auto_create_index=false # Vô hiệu hóa tự động tạo index
+      - plugins.security.ssl.http.enabled=false # Vô hiệu hóa SSL cho HTTP
+      - plugins.security.disabled=true # Vô hiệu hóa plugin bảo mật
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=StrongPass123!@ # Mật khẩu khởi tạo cho user admin
+    ulimits:
+      memlock:
+        hard: -1 # Thiết lập ulimit không giới hạn cho memlock
+        soft: -1
+      nofile:
+        soft: 65536 # Thiết lập ulimit cho số lượng file mở tối đa
+        hard: 65536
+    volumes:
+      - "opensearch_conf:/usr/share/opensearch/config/:rw" # Volume cho cấu hình OpenSearch
+      - "opensearch_data:/usr/share/opensearch/data:rw" # Volume cho dữ liệu OpenSearch
+    networks:
+      - graylog_net
+
+  mongodb:
+    # Sử dụng image MongoDB phiên bản 7.0.14
+    image: mongo:7.0.14
+    container_name: mongodb
+    volumes:
+      - "mongodb_data:/data/db:rw" # Volume cho dữ liệu MongoDB
+    restart: on-failure # Tự động khởi động lại nếu gặp lỗi
+    #healthcheck:
+    #  test: ["CMD-SHELL", "ping mongodb || exit 1"] # Kiểm tra trạng thái MongoDB
+    #  interval: 30s # Thời gian giữa các lần kiểm tra
+    #  timeout: 10s # Thời gian chờ cho mỗi lần kiểm tra
+    #  retries: 5 # Số lần thử lại khi kiểm tra thất bại
+    networks:
+      - graylog_net
+
+networks:
+  graylog_net:
+    driver: bridge # Sử dụng mạng bridge
+
+volumes:
+  graylog_data:
+    driver: local # Volume cho dữ liệu Graylog
+  opensearch_conf:
+    driver: local # Volume cho cấu hình OpenSearch
+  opensearch_data:
+    driver: local # Volume cho dữ liệu OpenSearch
+  mongodb_data:
+    driver: local # Volume cho dữ liệu MongoDB
+  graylog_journal:
+    driver: local # Volume cho journal của Graylog
