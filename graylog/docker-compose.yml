@@ -11,6 +11,7 @@ services:
         condition: "service_started" # Khởi động khi mongodb đã sẵn sàng
     entrypoint: "/usr/bin/tini -- wait-for-it elasticsearch:9200 -- /docker-entrypoint.sh"
     environment:
+      - GRAYLOG_NODE_ID_FILE=/usr/share/graylog/data/config/node-id
       - GRAYLOG_HTTP_BIND_ADDRESS=0.0.0.0:9000 # Địa chỉ bind cho giao diện HTTP
       - GRAYLOG_ELASTICSEARCH_HOSTS=http://opensearch:9200 # Địa chỉ của OpenSearch
       - GRAYLOG_MONGODB_URI=mongodb://mongodb:27017/graylog # URI kết nối MongoDB
@@ -18,6 +19,7 @@ services:
       - GRAYLOG_PASSWORD_SECRET=34loSp3QrC7vGn1L5p4VysY8fe1aIJOOEFLFKWGD4kc6KkCXpAq7bd2aIJsJl47hDmuV0Mmr6IByFP2HVg5vspGovOWFFvZ5 # Bí mật dùng để mã hóa
       - GRAYLOG_ROOT_PASSWORD_SHA2=065e0ac84427a42a55a56f786ae125255d0c0455deb763a96fb4f13be6ebc8c9 # Mật khẩu root mã hóa SHA2 (pass: minhtenlaquang)
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/ # URI bên ngoài cho giao diện web
+      - GRAYLOG_SERVER_JAVA_OPTS=-Xms2g -Xmx2g
       - GRAYLOG_ROOT_TIMEZONE=Asia/Ho_Chi_Minh # Múi giờ cho tài khoản root
     ports:
       - "9000:9000/tcp" # Cổng HTTP cho giao diện web
@@ -44,6 +46,7 @@ services:
     container_name: opensearch
     environment:
       - OPENSEARCH_JAVA_OPTS=-Xms4g -Xmx4g # Thiết lập bộ nhớ Java cho OpenSearch
+      - processbuffer_processors=6
       - bootstrap.memory_lock=true # Khóa bộ nhớ để cải thiện hiệu suất
       - discovery.type=single-node # Thiết lập chế độ single-node
       - action.auto_create_index=false # Vô hiệu hóa tự động tạo index
