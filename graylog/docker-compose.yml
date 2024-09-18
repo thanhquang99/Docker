@@ -91,5 +91,5 @@ volumes:
     driver: local # Volume cho dữ liệu OpenSearch
   mongodb_data:
     driver: local # Volume cho dữ liệu MongoDB
-  graylog_journal:
+  graylog_plugin:
     driver: local # Volume cho journal của Graylog
