@@ -32,8 +32,8 @@ services:
       - "13302:13302/tcp" # Cổng tùy chỉnh khác tcp
       - "13302:13302/udp" # Cổng tùy chỉnh khác udp
     volumes:
-      - "graylog_data:/usr/share/graylog/data/config:rw" # Volume cho dữ liệu của Graylog
-      - "graylog_journal:/usr/share/graylog/data/journal:rw" # Volume cho journal của Graylog
+      - "graylog_data:/usr/share/graylog/data:rw" # Volume cho dữ liệu của Graylog
+      - "graylog_plugin:/usr/share/graylog/plugin:rw" # Volume cho journal của Graylog
     restart: on-failure # Tự động khởi động lại nếu gặp lỗi
     networks:
       - graylog_net
