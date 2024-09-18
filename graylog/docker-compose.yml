@@ -20,12 +20,17 @@ services:
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/ # URI bên ngoài cho giao diện web
       - GRAYLOG_ROOT_TIMEZONE=Asia/Ho_Chi_Minh # Múi giờ cho tài khoản root
     ports:
-      - "9000:9000" # Cổng HTTP cho giao diện web
-      - "5044:5044" # Cổng cho nhận log từ Filebeat
-      - "5140:5140" # Cổng cho nhận log từ syslog
-      - "12201:12201" # Cổng cho nhận log từ GELF UDP
-      - "13301:13301" # Cổng tùy chỉnh (thay thế cho dịch vụ khác)
-      - "13302:13302" # Cổng tùy chỉnh khác
+      - "9000:9000/tcp" # Cổng HTTP cho giao diện web
+      - "5044:5044/udp" # Cổng cho nhận log từ Filebeat udp
+      - "5044:5044/tcp" # Cổng cho nhận log từ Filebeat tcp
+      - "5140:5140/udp" # Cổng cho nhận log từ syslog udp
+      - "5140:5140/tcp" # Cổng cho nhận log từ syslog tcp
+      - "12201:12201/tcp" # Cổng cho nhận log từ GELF TCP
+      - "12201:12201/udp" # Cổng cho nhận log từ GELF UDP
+      - "13301:13301/tcp" # Cổng tùy chỉnh (thay thế cho dịch vụ khác) tcp
+      - "13301:13301/udp" # Cổng tùy chỉnh (thay thế cho dịch vụ khác) udp
+      - "13302:13302/tcp" # Cổng tùy chỉnh khác tcp
+      - "13302:13302/udp" # Cổng tùy chỉnh khác udp
     volumes:
       - "graylog_data:/usr/share/graylog/data/config:rw" # Volume cho dữ liệu của Graylog
       - "graylog_journal:/usr/share/graylog/data/journal:rw" # Volume cho journal của Graylog
