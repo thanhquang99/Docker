@@ -30,7 +30,7 @@ Riêng container graylog sử dụng expose port 9000:9000 để dùng truy cậ
   - Bạn cũng cần sử lại cấu hình graylog và opensearch sử dụng ram và cpu để phù hợp với máy của bạn. Thông thường opensearch sẽ chiếm 50% RAM và graylog chiếm 25% RAM
   ![alt text](../anh/Screenshot_45.png)
 
-- Đợi 1 thời gian cho đến khi docker compose chạy xong ta sẽ vào trang http://<ip-docker-host>:9000. Với user: admin, password: minhtenlaquang
+- Đợi 1 thời gian cho đến khi docker compose chạy xong ta sẽ vào trang http://`<ip-docker-host>`:9000. Với user: admin, password: minhtenlaquang
   ![alt text](../anh/Screenshot_46.png)
   
 ## 3. Tùy chỉnh tài nguyên sử dụng mà graylog sử dụng 
