@@ -39,6 +39,14 @@ services:
     restart: on-failure # Tự động khởi động lại nếu gặp lỗi
     networks:
       - graylog_net
+    #deploy:
+    #  resources:
+    #    limits:
+    #      cpus: "2.0"
+    #      memory: "4G"
+    #    reservations:
+    #      cpus: "1.0"
+    #      memory: "2G"
 
   opensearch:
     # Sử dụng image OpenSearch phiên bản 2.12.0
@@ -65,7 +73,14 @@ services:
       - "opensearch_data:/usr/share/opensearch/data:rw" # Volume cho dữ liệu OpenSearch
     networks:
       - graylog_net
-
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "4.0"
+#          memory: "6G"
+#        reservations:
+#          cpus: "2.0"
+#          memory: "4G"
   mongodb:
     # Sử dụng image MongoDB phiên bản 7.0.14
     image: mongo:7.0.14
@@ -84,7 +99,14 @@ services:
 networks:
   graylog_net:
     driver: bridge # Sử dụng mạng bridge
-
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: "1.0"
+#          memory: "2G"
+#        reservations:
+#          cpus: "0.5"
+#          memory: "1G"
 volumes:
   graylog_data:
     driver: local # Volume cho dữ liệu Graylog

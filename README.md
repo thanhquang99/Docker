@@ -19,3 +19,10 @@ Trong phần này sẽ ghi chép quá trình khi mình không biết gì về do
 - Docker compose để build lên 4 container: netbox, postgres, redis, nginx
 - file active để cấu hình superuser, nginx reveser proxy
 
+## 3. [Xây dụng graylog trên docker](https://github.com/thanhquang99/Docker/tree/main/graylog)
+
+Đây là phần docker compose mình góp nhặt và ghi chép lại đê tự build lên graylog của mình
+
+Trong phần này sẽ gồm 3 container: graylog, opensearch, và mongo
+
+Trong lúc build mình có hướng dẫn thêm việc giới hạn tài nguyên sử dung của graylog và opensreach
