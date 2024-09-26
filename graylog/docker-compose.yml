@@ -19,7 +19,7 @@ services:
       - GRAYLOG_PASSWORD_SECRET=34loSp3QrC7vGn1L5p4VysY8fe1aIJOOEFLFKWGD4kc6KkCXpAq7bd2aIJsJl47hDmuV0Mmr6IByFP2HVg5vspGovOWFFvZ5 # Bí mật dùng để mã hóa
       - GRAYLOG_ROOT_PASSWORD_SHA2=065e0ac84427a42a55a56f786ae125255d0c0455deb763a96fb4f13be6ebc8c9 # Mật khẩu root mã hóa SHA2 (pass: minhtenlaquang)
       - GRAYLOG_HTTP_EXTERNAL_URI=http://127.0.0.1:9000/ # URI bên ngoài cho giao diện web
-      - GRAYLOG_SERVER_JAVA_OPTS=-Xms2g -Xmx2g
+      - GRAYLOG_SERVER_JAVA_OPTS=-Xms4g -Xmx4g
       - GRAYLOG_ROOT_TIMEZONE=Asia/Ho_Chi_Minh # Múi giờ cho tài khoản root
     ports:
       - "9000:9000/tcp" # Cổng HTTP cho giao diện web
@@ -39,14 +39,14 @@ services:
     restart: on-failure # Tự động khởi động lại nếu gặp lỗi
     networks:
       - graylog_net
-    #deploy:
-    #  resources:
-    #    limits:
-    #      cpus: "2.0"
-    #      memory: "4G"
-    #    reservations:
-    #      cpus: "1.0"
-    #      memory: "2G"
+    deploy:
+      resources:
+        limits:
+          cpus: "3.0"
+          memory: "4G"
+        reservations:
+          cpus: "2.0"
+          memory: "2G"
 
   opensearch:
     # Sử dụng image OpenSearch phiên bản 2.12.0
@@ -73,14 +73,15 @@ services:
       - "opensearch_data:/usr/share/opensearch/data:rw" # Volume cho dữ liệu OpenSearch
     networks:
       - graylog_net
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "4.0"
-#          memory: "6G"
-#        reservations:
-#          cpus: "2.0"
-#          memory: "4G"
+    deploy:
+      resources:
+        limits:
+          cpus: "4.0"
+          memory: "6G"
+        reservations:
+          cpus: "2.0"
+          memory: "4G"
+
   mongodb:
     # Sử dụng image MongoDB phiên bản 7.0.14
     image: mongo:7.0.14
@@ -99,14 +100,7 @@ services:
 networks:
   graylog_net:
     driver: bridge # Sử dụng mạng bridge
-#    deploy:
-#      resources:
-#        limits:
-#          cpus: "1.0"
-#          memory: "2G"
-#        reservations:
-#          cpus: "0.5"
-#          memory: "1G"
+
 volumes:
   graylog_data:
     driver: local # Volume cho dữ liệu Graylog

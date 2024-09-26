@@ -2,7 +2,7 @@
 
 Tài liệu để build graylog được tôi sử dụng và tham khảo [ở đây](https://go2docs.graylog.org/current/downloading_and_installing_graylog/docker_installation.htm?TocPath=Installing+Graylog%7C_____2). Điều tôi làm chỉ là tận dụng cấu hình của họ và sửa lại để cho phù hợp với mục đích của mình
 
-Lưu ý cấu hình mình đang sử dụng là 8 Cpus và 12 Gb Ram
+Lưu ý cấu hình mình đang sử dụng là 8 Cpus và 12 Gb Ram và Docker ce version 27.2.1
 ## 1. Mô hình sử dụng
 ![alt text](../anh/Screenshot_43.png)
 
