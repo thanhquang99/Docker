@@ -6,8 +6,11 @@
     - [3.2 Các bước thực hành chi tiết](#32-các-bước-thực-hành-chi-tiết)
   - [4. Hướng dẫn cài đặt plugin netbox-inventory](#4-hướng-dẫn-cài-đặt-plugin-netbox-inventory)
     - [4.1 Các bước cài đặt chi tiết](#41-các-bước-cài-đặt-chi-tiết)
-  - [5. Hướng dẫn càu đặt plugin netbox-svm (netbox-software-version-manager)](#5-hướng-dẫn-càu-đặt-plugin-netbox-svm-netbox-software-version-manager)
+    - [4.2 Một số cấu hình cụ thể có thể được sử dụng với plugin](#42-một-số-cấu-hình-cụ-thể-có-thể-được-sử-dụng-với-plugin)
+    - [4.3 Sử dụng thực tế](#43-sử-dụng-thực-tế)
+  - [5. Hướng dẫn cài đặt plugin netbox-svm (netbox-software-version-manager)](#5-hướng-dẫn-cài-đặt-plugin-netbox-svm-netbox-software-version-manager)
     - [5.1 Các bước cài đặt chi tiết](#51-các-bước-cài-đặt-chi-tiết)
+    - [5.2 Sử dụng thực tế](#52-sử-dụng-thực-tế)
 # Hướng dẫn sử dụng docker compose để cấu hình netbox + nginx làm revser proxy
 Tài liệu để build netbox riêng lẻ được tôi sử dụng và tham khảo [ở đây](https://github.com/netbox-community/netbox-docker). Điều tôi làm chỉ là tận dụng cấu hình của họ và sửa lại để cho phù hợp với mục đích của mình
 
@@ -122,8 +125,21 @@ Ta có thể upload ảnh vào virtual machine để kiểm tra kết quả
 
 
 ## 4. Hướng dẫn cài đặt plugin netbox-inventory
-Tài liệu tham khảo được lấy [ở đây](https://github.com/hocchudong/netbox-software-version-manager/blob/main/README.md)
+Tài liệu tham khảo được lấy [ở đây](https://github.com/ArnesSI/netbox-inventory)
 
+![alt text](../anh/Screenshot_56.png)
+
+Plugin này được sử dụng để:
+- Quản lý tài sản phần cứng (Assets): 
+  - Plugin cho phép quản lý các tài sản vật lý như thiết bị mạng, module, và các mục lưu kho khác.
+  - Bạn có thể theo dõi tình trạng của tài sản, như đang sử dụng hay đang lưu trữ, giúp tối ưu hóa việc quản lý và triển khai thiết bị.
+- Quản lý loại và nhóm mục lưu trữ:
+  - Inventory Item Types: Định nghĩa các loại mục lưu trữ tương đương với các loại thiết bị và module. Điều này giúp chuẩn hóa các tài sản trong hệ thống.
+  - Inventory Item Groups: Nhóm các mục lưu trữ thành các nhóm cụ thể để dễ quản lý, tìm kiếm và theo dõi số lượng tài sản dự trữ.
+- Quản lý nhà cung cấp và giao nhận:
+  - Suppliers: Lưu trữ và quản lý thông tin về các nhà cung cấp phần cứng.
+  - Purchases: Quản lý các lần mua thiết bị, bao gồm số lượng, ngày mua, và nhà cung cấp liên quan.
+  - Deliveries: Theo dõi và quản lý các giao nhận hàng hoá, giúp bạn nắm rõ lịch sử vận chuyển và thời gian nhận hàng.
 ### 4.1 Các bước cài đặt chi tiết
 Bước 1: Ta vào terminal truy cập vào container netbox
 ```
@@ -195,7 +211,51 @@ Nếu bạn chưa thấy kết quả này có thể restart lại container
 docker restart my_netbox
 ```
 
-## 5. Hướng dẫn càu đặt plugin netbox-svm (netbox-software-version-manager)
+### 4.2 Một số cấu hình cụ thể có thể được sử dụng với plugin
+|Thông số|Giá trị mặc định|Miêu tả|
+|--------|-------|-------|
+|top_level_menu|True|Plugin này sẽ được hiện ở đầu menu|
+|used_status_name|used|Trạng thái cho biết tài sản đang được sử dụng|
+|stored_status_name|stored|Trạng thái cho biết tài sản đang được lưu trữ|
+|sync_hardware_serial_asset_tag|False|Khi một tài sản được gán hoặc hủy gán cho một thiết bị, mô-đun hoặc mục hàng tồn kho cần cập nhật lại seri để id để đông bộ hóa tài sản|
+|asset_import_create_purchase|False|Khi nhập tài sản, tự động tạo bất kỳ giao dịch mua, giao hàng hoặc nhà cung cấp nào nếu chưa tồn tại|
+|asset_import_create_device_type|False|Khi nhập tài sản loại thiết bị, tự động tạo nhà sản xuất và/hoặc loại thiết bị nếu nó không tồn tại|
+|asset_import_create_module_type|False|Khi nhập tài sản loại hàng tồn kho, tự động tạo nhà sản xuất và/hoặc loại thiết bị nếu nó không tồn tại|
+|asset_import_create_tenant|False|Khi nhập một tài sản, với chủ sở hữu hoặc người thuê, tự động tạo người thuê nếu nó không tồn tại|
+|asset_disable_editing_fields_for_tags|{}|Vô hiệu hóa chỉnh sửa 1 số trường chỉ định|
+|asset_disable_deletion_for_tags|[]|Danh sách các thẻ sẽ vô hiệu hóa việc xóa tài sản|
+|asset_custom_fields_search_filters|{}| các trường tùy chỉnh và loại tra cứu sẽ được thêm vào bộ lọc tìm kiếm cho tài sản|
+|asset_warranty_expire_warning_days|90|Số ngày kể từ ngày hết hạn bảo hành sẽ hiển thị dưới dạng cảnh báo trong trường Thời hạn bảo hành còn lại|
+|prefill_asset_name_create_inventoryitem|False|Khi mục kiểm kê phần cứng được tạo từ một tài sản, hãy điền trước tên InventoryItem sao cho khớp với tên tài sản.|
+|prefill_asset_tag_create_inventoryitem|False|Khi mục kiểm kê phần cứng được tạo từ một tài sản, hãy điền trước các thẻ để khớp với các thẻ được liên kết với tài sản đó.|
+
+### 4.3 Sử dụng thực tế 
+- Sử dụng kho để tạo device mới
+  
+![alt text](../anh/Screenshot_57.png)
+
+![alt text](../anh/Screenshot_58.png)
+
+- Chuyển device về kho: Ta cần xóa liên kết đến device rồi sau đó xóa device đó đi
+
+![alt text](../anh/Screenshot_59.png)
+
+![alt text](../anh/Screenshot_60.png)
+
+![alt text](../anh/Screenshot_61.png)
+
+![alt text](../anh/Screenshot_62.png)
+
+## 5. Hướng dẫn cài đặt plugin netbox-svm (netbox-software-version-manager)
+Plugin này được lấy và tham khảo [ở đấy](https://github.com/hocchudong/netbox-software-version-manager)
+
+![alt text](../anh/Screenshot_63.png)
+
+Những thứ mà plugin này có thể làm được:
+- Software Products: Quản lý tên phần mềm và nhà phát triển
+- Versions: Quản lý các version mà phần mềm tạo bên trên có sẵn
+- Installations: Quản lý các thông tin device hay máy ảo nào được cài đặt phần mềm đó
+- Licenses: Quản lý các license chưa sử dụng hay đã được sử dụng cho máy nào và thời gian sử dụng còn bao lâu
 
 ### 5.1 Các bước cài đặt chi tiết
 Bước 1: Dùng terminal để truy cập vào container netbox và tải xuống plugin
@@ -243,3 +303,19 @@ Kiểm tra kết quả
 
 ![alt text](../anh/Screenshot_55.png)
 
+### 5.2 Sử dụng thực tế
+- Tạo Software Products
+  
+![alt text](../anh/Screenshot_64.png)
+
+- Tạo version cho software này
+
+![alt text](../anh/Screenshot_65.png)
+
+- Cài đặt software này cho máy ảo
+
+![alt text](../anh/Screenshot_66.png)
+
+- Tạo license để kích hoạt phần mềm bản quyền (nếu cần):
+
+![alt text](../anh/Screenshot_67.png)
