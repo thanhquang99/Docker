@@ -46,6 +46,7 @@ services:
       - netbox-media-files:/opt/netbox/netbox/media:rw
       - netbox-reports-files:/opt/netbox/netbox/reports:rw
       - netbox-scripts-files:/opt/netbox/netbox/scripts:rw
+      - netbox-python-site-packages:/opt/netbox/venv/lib/python3.11/site-packages:rw
   my_nginx:
     image: nginx:latest
     container_name: my_nginx
@@ -70,6 +71,8 @@ volumes:
   netbox-reports-files:
     driver: local
   netbox-scripts-files:
+    driver: local
+  netbox-python-site-packages:
     driver: local
   netbox-postgres-data:
     driver: local
