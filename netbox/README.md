@@ -11,6 +11,8 @@
   - [5. Hướng dẫn cài đặt plugin netbox-svm (netbox-software-version-manager)](#5-hướng-dẫn-cài-đặt-plugin-netbox-svm-netbox-software-version-manager)
     - [5.1 Các bước cài đặt chi tiết](#51-các-bước-cài-đặt-chi-tiết)
     - [5.2 Sử dụng thực tế](#52-sử-dụng-thực-tế)
+  - [6. Xử lý nếu chưa có volume netbox-python-site-packages](#6-xử-lý-nếu-chưa-có-volume-netbox-python-site-packages)
+    - [6.1 Chi tiết các bước thực hiện](#61-chi-tiết-các-bước-thực-hiện)
 # Hướng dẫn sử dụng docker compose để cấu hình netbox + nginx làm revser proxy
 Tài liệu để build netbox riêng lẻ được tôi sử dụng và tham khảo [ở đây](https://github.com/netbox-community/netbox-docker). Điều tôi làm chỉ là tận dụng cấu hình của họ và sửa lại để cho phù hợp với mục đích của mình
 
@@ -319,3 +321,51 @@ Kiểm tra kết quả
 - Tạo license để kích hoạt phần mềm bản quyền (nếu cần):
 
 ![alt text](../anh/Screenshot_67.png)
+
+## 6. Xử lý nếu chưa có volume netbox-python-site-packages
+Đôi khi các bạn sử dụng docker compose tạo netbox mà chưa có volume netbox-python-site-packages thì ta cần xử lý thế nào
+
+Các bước cần thực hiện:
+- Tạo volume mới để copy file vào (Lưu ý tên volume phải đặt đúng mẫu vì tên volume sẽ khác so với tên file docker-compose.yml)
+- Tiếp theo copy file plugin từ container netbox vào volume
+- Sửa lại docker-compose.yml để khai báo thêm volume mới
+- Bật lại docker compose
+
+### 6.1 Chi tiết các bước thực hiện
+- Tìm kiếm mẫu volume của netbox
+  ```
+  docker inspect my_netbox
+  ```
+  ![alt text](../anh/Screenshot_68.png)
+
+  vậy là sẽ có thêm tiền tố `netbox_` vào tên volume
+- Tạo volume mới
+  ```
+  docker volume create netbox_netbox-python-site-packages
+  ```
+- Copy các file plugin vào
+  ```
+  docker cp my_netbox:/opt/netbox/venv/lib/python3.11/site-packages /var/lib/docker/volumes/netbox_netbox-python-site-packages/_data/
+  mv /var/lib/docker/volumes/netbox_netbox-python-site-packages/_data/site-packages/* /var/lib/docker/volumes/netbox_netbox-python-site-packages/_data/
+  rm -rf /var/lib/docker/volumes/netbox_netbox-python-site-packages/_data/site-packages
+  ```
+- Sửa lại file docker compose
+  ```
+  cd /opt/Docker/netbox
+  vi docker-compose.yml
+  ```
+  - Thêm vào nội dung sau ở mục volume:
+  ```
+  - netbox-python-site-packages:/opt/netbox/venv/lib/python3.11/site-packages:rw
+  ```
+  - Thêm vào loại volume
+  ```
+  netbox-python-site-packages:
+    driver: local
+  ```
+- Bây giờ ta có thể test bằng lệnh
+  ```
+  docker compose down
+  docker compose up
+  ```
+  ![alt text](../anh/Screenshot_69.png)
