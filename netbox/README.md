@@ -13,6 +13,7 @@
     - [5.2 Sử dụng thực tế](#52-sử-dụng-thực-tế)
   - [6. Xử lý nếu chưa có volume netbox-python-site-packages](#6-xử-lý-nếu-chưa-có-volume-netbox-python-site-packages)
     - [6.1 Chi tiết các bước thực hiện](#61-chi-tiết-các-bước-thực-hiện)
+  - [7. Cài đặt plugin netbox-svm version mới](#7-cài-đặt-plugin-netbox-svm-version-mới)
 # Hướng dẫn sử dụng docker compose để cấu hình netbox + nginx làm revser proxy
 Tài liệu để build netbox riêng lẻ được tôi sử dụng và tham khảo [ở đây](https://github.com/netbox-community/netbox-docker). Điều tôi làm chỉ là tận dụng cấu hình của họ và sửa lại để cho phù hợp với mục đích của mình
 
@@ -369,3 +370,19 @@ Các bước cần thực hiện:
   docker compose up
   ```
   ![alt text](../anh/Screenshot_69.png)
+
+## 7. Cài đặt plugin netbox-svm version mới
+Bản trước tôi cài là bản netbox-svm 1.0.1 nhưng bây giờ đã có bản 1.1.0, tôi muốn cài lại bản mới nhất
+- Xóa bản cũ đi
+  ```
+  pip uninstall netbox-svm
+  ```
+- Cài lại bản mới
+  ```
+  pip install netbox-svm==1.1.0
+  ```
+- Update lại cơ sở dữ liệu
+  ```
+  cd /opt/netbox/netbox/
+  python manage.py migrate netbox_svm
+  ```
