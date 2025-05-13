@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # MongoDB: https://hub.docker.com/_/mongo/
+  mongodb:
+    image: "mongo:7.0"  
+    restart: "on-failure"
+    hostname: "graylog-mongodb"
+    container_name: "graylog-mongodb"
+    ports:
+      - "27017:27017/tcp"
+    networks:
+      - graylog
+    volumes:
+      - "mongodb_data:/data/db"
+      - "mongodb_config:/data/configdb"
+
+  # Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
+  datanode:
+    image: "graylog/graylog-datanode:6.2.2"
+    hostname: "graylog-datanode"
+    container_name: "graylog-datanode"
+    # depends_on:
+    #   - mongodb  # Phụ thuộc vào MongoDB
+    environment:
+      GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
+      GRAYLOG_DATANODE_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET:?Please configure GRAYLOG_PASSWORD_SECRET in the .env file}"
+      GRAYLOG_DATANODE_MONGODB_URI: "mongodb://graylog-mongodb:27017/graylog"
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "8999:8999/tcp"
+      - "9200:9200/tcp"
+      - "9300:9300/tcp"
+    networks:
+      - graylog  
+    volumes:
+      - "graylog-datanode:/var/lib/graylog-datanode"
+    restart: "on-failure"
+
+  # Graylog: https://hub.docker.com/r/graylog/graylog-enterprise
+  graylog:
+    hostname: "graylog-server"
+    container_name: "graylog-server"
+    image: "graylog/graylog:6.2.2"
+    # depends_on:
+    #   datanode:
+    #     condition: service_healthy  # Phụ thuộc vào DataNode "healthy"
+    entrypoint: "/usr/bin/tini --  /docker-entrypoint.sh"
+    environment:
+      GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/data/node-id"
+      GRAYLOG_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET:?Please configure GRAYLOG_PASSWORD_SECRET in the .env file}"
+      GRAYLOG_ROOT_PASSWORD_SHA2: "${GRAYLOG_ROOT_PASSWORD_SHA2:?Please configure GRAYLOG_ROOT_PASSWORD_SHA2 in the .env file}"
+      GRAYLOG_HTTP_BIND_ADDRESS: "0.0.0.0:9000"
+      GRAYLOG_REPORT_DISABLE_SANDBOX: true
+      GRAYLOG_HTTP_EXTERNAL_URI: "http://127.0.0.1:9000/"
+      GRAYLOG_SERVER_JAVA_OPTS: "${GRAYLOG_ROOT_JAVA_OPTS:?Please configure GRAYLOG_ROOT_JAVA_OPTS in the .env file}"
+      GRAYLOG_MONGODB_URI: "mongodb://graylog-mongodb:27017/graylog"
+      GRAYLOG_ROOT_TIMEZONE: Asia/Ho_Chi_Minh
+    ports:
+      - "5044:5044/tcp"
+      - "5140:5140/udp"
+      - "5140:5140/tcp"
+      - "5555:5555/tcp"
+      - "5555:5555/udp"
+      - "9000:9000/tcp"
+      - "12201:12201/tcp"
+      - "12201:12201/udp"
+      - "1000:1000/tcp"
+      - "1000:1000/udp"
+      - "13301:13301/tcp"
+      - "13302:13302/tcp"
+      - "8080:8080/tcp"
+      - "9001:9001/tcp"
+    networks:
+      - graylog
+    volumes:
+      - "graylog_data:/usr/share/graylog/data:rw"
+      - "graylog_plugin:/usr/share/graylog/plugin:rw"
+    restart: "on-failure"
+
+networks:
+  graylog:
+    driver: "bridge"
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+  graylog-datanode:
+  graylog_data:
+  graylog_plugin:
