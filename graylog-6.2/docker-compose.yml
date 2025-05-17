@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # MongoDB: https://hub.docker.com/_/mongo/
   mongodb:
@@ -14,14 +12,20 @@ services:
     volumes:
       - "mongodb_data:/data/db"
       - "mongodb_config:/data/configdb"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 30s
+      timeout: 120s
+      retries: 5
 
   # Graylog Data Node: https://hub.docker.com/r/graylog/graylog-datanode
   datanode:
     image: "graylog/graylog-datanode:6.2.2"
     hostname: "graylog-datanode"
     container_name: "graylog-datanode"
-    # depends_on:
-    #   - mongodb  # Phụ thuộc vào MongoDB
+    depends_on:
+      mongodb:
+        condition: service_healthy
     environment:
       GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
       GRAYLOG_DATANODE_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET:?Please configure GRAYLOG_PASSWORD_SECRET in the .env file}"
@@ -41,16 +45,14 @@ services:
       - graylog  
     volumes:
       - "graylog-datanode:/var/lib/graylog-datanode"
-    restart: "on-failure"
 
   # Graylog: https://hub.docker.com/r/graylog/graylog-enterprise
   graylog:
     hostname: "graylog-server"
     container_name: "graylog-server"
     image: "graylog/graylog:6.2.2"
-    # depends_on:
-    #   datanode:
-    #     condition: service_healthy  # Phụ thuộc vào DataNode "healthy"
+    depends_on:
+      - datanode
     entrypoint: "/usr/bin/tini --  /docker-entrypoint.sh"
     environment:
       GRAYLOG_NODE_ID_FILE: "/usr/share/graylog/data/data/node-id"
