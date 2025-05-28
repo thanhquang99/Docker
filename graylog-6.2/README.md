@@ -32,13 +32,15 @@ Tạo `password_secret` (chuỗi bí mật để mã hóa dữ liệu):
 ```bash
 openssl rand -hex 32
 ```
-Lấy kết quả làm giá trị cho biến `GRAYLOG_PASSWORD_SECRET`.
+Lấy kết quả làm giá trị cho biến `GRAYLOG_PASSWORD_SECRET`. Thay đổi giá trị biến vào file .env
 
 Tạo `root_password_sha2` (mật khẩu admin, đã hash SHA256):
 ```bash
 echo -n "Enter Password: " && head -1 </dev/stdin | tr -d '\n' | sha256sum | cut -d" " -f1
 ```
-Lấy kết quả làm giá trị cho biến `GRAYLOG_ROOT_PASSWORD_SHA2`.
+Lấy kết quả làm giá trị cho biến `GRAYLOG_ROOT_PASSWORD_SHA2`. Thay đổi giá trị biến vào file .env
+
+![alt text](image-9.png)
 
 ---
 
@@ -55,10 +57,17 @@ docker compose up -d
 
 ### 3.1. Truy cập Graylog
 
-- Giao diện web: [http://localhost:9000](http://localhost:9000)
+- Giao diện web: `http://<ip-graylog>:9000`
 - Đăng nhập với:
   - Username: `admin`
   - Password: (mật khẩu bạn đã chọn ở bước trên)
+- Lưu ý rằng lần đầu tiên đăng nhập ta sẽ không nhập password đã thiết lập ở trên mà password sẽ phải lấy ở log container
+```
+docker logs graylog-server | head -n 60
+```
+![alt text](image-10.png)
+
+![alt text](image-11.png)
 
 ### 3.2. Quản trị cơ bản
 
