@@ -1,4 +1,8 @@
 # 1. Hướng dẫn sử dụng Graylog 6.2 với Docker Compose
+Cấu hình tối thiểu của graylog:
+- CPU: 8 vCPU
+- Ram: 8G RAM
+- SSD: 30 GB 
 
 ## 1.1. Mục đích
 
@@ -82,7 +86,7 @@ docker logs graylog-server | head -n 60
 - Dừng dịch vụ:
   ```bash
   docker compose down
-  ```
+  
 
 ---
 
