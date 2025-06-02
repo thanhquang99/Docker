@@ -29,6 +29,7 @@ services:
     environment:
       GRAYLOG_DATANODE_NODE_ID_FILE: "/var/lib/graylog-datanode/node-id"
       GRAYLOG_DATANODE_PASSWORD_SECRET: "${GRAYLOG_PASSWORD_SECRET:?Please configure GRAYLOG_PASSWORD_SECRET in the .env file}"
+      OPENSEARCH_JAVA_OPTS: "${OPENSEARCH_JAVA_OPTS:?Please configure OPENSEARCH_JAVA_OPTS in the .env file}"
       GRAYLOG_DATANODE_MONGODB_URI: "mongodb://graylog-mongodb:27017/graylog"
     ulimits:
       memlock:
